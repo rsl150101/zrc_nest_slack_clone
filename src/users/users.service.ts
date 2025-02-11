@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
@@ -14,18 +14,9 @@ export class UsersService {
 
   getUsers() {}
   async join(email: string, nickname: string, password: string) {
-    if (!email) {
-      throw new HttpException('No Email', 400);
-    }
-    if (!nickname) {
-      throw new HttpException('No Nickname', 400);
-    }
-    if (!password) {
-      throw new HttpException('No Password', 400);
-    }
     const user = await this.usersRepository.findOne({ where: { email } });
     if (user) {
-      throw new HttpException('Exist User', 401);
+      throw new UnauthorizedException('Exist User');
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);

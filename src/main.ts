@@ -1,5 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
+
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/httpException.filter';
 
@@ -10,6 +12,7 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
   console.log(`Listening on http://localhost:${port}`);
 
+  app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
 
   const config = new DocumentBuilder()
