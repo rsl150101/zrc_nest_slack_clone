@@ -7,9 +7,10 @@ import {
   Res,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
+
 import { JoinRequestDto } from './dto/join.request.dto';
 import { UsersService } from './users.service';
-import { ApiOkResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UserDto } from 'src/common/dto/user.dto';
 import { User } from 'src/common/decorators/user.decorator';
 import { UndefinedToNullInterceptor } from 'src/common/interceptors/undefinedToNull.interceptor';
@@ -30,8 +31,8 @@ export class UsersController {
 
   @ApiOperation({ summary: '회원가입' })
   @Post()
-  postUsers(@Body() body: JoinRequestDto) {
-    this.usersService.postUsers(body.email, body.nickname, body.password);
+  Join(@Body() body: JoinRequestDto) {
+    this.usersService.join(body.email, body.nickname, body.password);
   }
 
   @ApiOkResponse({
