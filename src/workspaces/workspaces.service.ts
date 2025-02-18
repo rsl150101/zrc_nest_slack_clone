@@ -68,4 +68,40 @@ export class WorkspacesService {
       })
       .getMany();
   }
+
+  async createWorkspaceMembers(url: string, email: string) {
+    const workspace = await this.workspacesRepository.findOne({
+      where: { url },
+      join: {
+        alias: 'workspace',
+        innerJoinAndSelect: {
+          channels: 'workspace.Channels',
+        },
+      },
+    });
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (!user) {
+      return null;
+    }
+    const workspaceMember = new WorkspaceMembers();
+    workspaceMember.WorkspaceId = workspace.id;
+    workspaceMember.UserId = user.id;
+    await this.workspaceMembersRepository.save(workspaceMember);
+    const channelMember = new ChannelMembers();
+    channelMember.ChannelId = workspace.Channels.find(
+      (v) => v.name === 'General',
+    ).id;
+    channelMember.UserId = user.id;
+    await this.channelMembersRepository.save(channelMember);
+  }
+
+  async getWorkspaceMember(url: string, id: number) {
+    return this.usersRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id })
+      .innerJoin('user.Workspaces', 'workspaces', 'workspaces.url = :url', {
+        url,
+      })
+      .getOne();
+  }
 }

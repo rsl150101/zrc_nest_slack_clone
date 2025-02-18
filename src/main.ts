@@ -15,7 +15,11 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
   console.log(`Listening on http://localhost:${port}`);
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  );
   app.useGlobalFilters(new HttpExceptionFilter());
 
   const config = new DocumentBuilder()
