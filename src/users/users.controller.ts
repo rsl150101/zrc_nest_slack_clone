@@ -16,6 +16,8 @@ import { UserDto } from 'src/common/dto/user.dto';
 import { User } from 'src/common/decorators/user.decorator';
 import { UndefinedToNullInterceptor } from 'src/common/interceptors/undefinedToNull.interceptor';
 import { LocalAuthGuard } from 'src/common/guards/localAuth.guard';
+import { LoggedInGuard } from 'src/common/guards/loggedIn.guard';
+import { NotLoggedInGuard } from 'src/common/guards/notLoggedIn.guard';
 
 @UseInterceptors(UndefinedToNullInterceptor)
 @Controller('api/users')
@@ -28,10 +30,11 @@ export class UsersController {
   @ApiOperation({ summary: '내 정보 조회' })
   @Get()
   getUsers(@User() user) {
-    return user;
+    return user || false;
   }
 
   @ApiOperation({ summary: '회원가입' })
+  @UseGuards(new NotLoggedInGuard())
   @Post()
   async join(@Body() body: JoinRequestDto) {
     await this.usersService.join(body.email, body.nickname, body.password);
@@ -45,13 +48,14 @@ export class UsersController {
     description: '서버 에러',
   })
   @ApiOperation({ summary: '로그인' })
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(new LocalAuthGuard())
   @Post('login')
   login(@User() user) {
     return user;
   }
 
   @ApiOperation({ summary: '로그아웃' })
+  @UseGuards(new LoggedInGuard())
   @Post('logout')
   logOut(@Req() req, @Res() res) {
     req.logOut();

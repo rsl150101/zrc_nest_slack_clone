@@ -1,14 +1,14 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { UsersModule } from './users/users.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
 import { ChannelsModule } from './channels/channels.module';
 import { DmsModule } from './dms/dms.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-
 import { ChannelChats } from './entities/ChannelChats';
 import { ChannelMembers } from './entities/ChannelMembers';
 import { Channels } from './entities/Channels';
@@ -17,10 +17,12 @@ import { Mentions } from './entities/Mentions';
 import { Users } from './entities/Users';
 import { WorkspaceMembers } from './entities/WorkspaceMembers';
 import { Workspaces } from './entities/Workspaces';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    AuthModule,
     UsersModule,
     WorkspacesModule,
     ChannelsModule,
